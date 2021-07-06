@@ -22,11 +22,12 @@ public class DnaServiceImpl implements DnaService {
 	public boolean isMutant(String[] dnaArray) {
 		boolean isMutant = false;
 		
-		String[][] dna = Matrix.build(dnaArray);				
-
-		isMutant = BusinessDNAAnalizerHelper.getInstance().isMutant(dna);
+		String[][] dna = Matrix.build(dnaArray);
 		
-		Dna newDna = new Dna(dnaArray, isMutant);		
+		isMutant = new BusinessDNAAnalizerHelper().isMutant(dna);		
+		
+		Dna newDna = new Dna(dnaArray, isMutant);
+		
 		this.Store(newDna);
 		
 		return isMutant;        		

@@ -11,31 +11,18 @@ import com.soderling.challenge.model.Diagonal;
 import com.soderling.challenge.utils.SearchResult;
 import com.soderling.challenge.utils.Matrix;
 
-public class BusinessDNAAnalizerHelper {
-	private static BusinessDNAAnalizerHelper singleton = null;
-
-	public static BusinessDNAAnalizerHelper getInstance() {
-		if (singleton == null) {
-			singleton = new BusinessDNAAnalizerHelper();
-		}
-		return singleton;
-	}
-	
+public class BusinessDNAAnalizerHelper {	
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
-	private List<Counter> filteredCounterList;
-	private List<Diagonal> filteredDiagonalList;
-	private List<Counter> counterList = new ArrayList<Counter>();
-	private int coincidence=0;
 	
 	public boolean isMutant(String [][]dna) {
-		boolean keep = false;		
-		SearchResult searchResult = new SearchResult(false);
+		boolean keep;		
+		SearchResult searchResult = new SearchResult();
         
-		logger.info("Horizontal search start");
+		logger.info("Horizontal Search Start");
 		
         //horizontal search
 		for (int x = 0; x < dna.length; x++) {
-			coincidence = 0;
+			searchResult.setCoincidence(0);
 			for (int y = 0; y < dna[x].length-1; y++) {
 				keep = searchHorizontal(x, y, dna, searchResult);					
 					if(keep == false) {
@@ -44,19 +31,19 @@ public class BusinessDNAAnalizerHelper {
 			}
 		}
 		
-		logger.info("horizontal search is: " + searchResult.getBooleano());
+		logger.info("Horizontal search is: " + searchResult.getBooleano());
 		
-		counterList.clear();
+		searchResult.getCounterList().clear();
 		
 		//vertical search	
 		if (searchResult.getBooleano() == false) {
 			
-			logger.info("\n\nVertical search start");
+			logger.info("Vertical Search Start");
 			
 			String[][] invertDna = Matrix.invert(dna);
 			
 			for (int x = 0; x < invertDna.length; x++) {
-				coincidence = 0;
+				searchResult.setCoincidence(0);
 				for (int y = 0; y < invertDna[x].length-1; y++) {
 					keep = searchHorizontal(x, y, invertDna, searchResult);					
 						if(keep == false) {
@@ -65,17 +52,17 @@ public class BusinessDNAAnalizerHelper {
 				}
 			}
 			
-			logger.info("vertical search is: " + searchResult.getBooleano());
+			logger.info("Vertical search is: " + searchResult.getBooleano());
 		}
 		
-		counterList.clear();
+		searchResult.getCounterList().clear();
 		
 		// oblique search
 		if (searchResult.getBooleano() == false) {
 			
-			logger.info("\n\nOblique search start");
+			logger.info("Oblique Search Start");
 			
-			coincidence = 0;
+			searchResult.setCoincidence(0);
 			
 			List<Diagonal> DiagonalsList = mapDiagonal();
 			
@@ -92,7 +79,7 @@ public class BusinessDNAAnalizerHelper {
 				}				
 			}
 			
-			logger.info("oblique search is: " + searchResult.getBooleano());
+			logger.info("Oblique search is: " + searchResult.getBooleano());
 		}		
 		
 		return searchResult.getBooleano();
@@ -108,11 +95,11 @@ public class BusinessDNAAnalizerHelper {
 		String nextLetter = matrix[x][y+1];
 
 		if (letter.equals(nextLetter)) {
-			counterList.add(new Counter(abscissa, letter));
+			searchResult.getCounterList().add(new Counter(abscissa, letter));
 			
-			coincidence = getCoincidence(counterList, abscissa, letter);
+			searchResult.setCoincidence(getCoincidence(searchResult.getCounterList(), abscissa, letter));
 			
-			if (coincidence==3) {
+			if (searchResult.getCoincidence()==3) {
 				searchResult.setBooleano(true);
 				return false; 
 			}	
@@ -130,11 +117,11 @@ public class BusinessDNAAnalizerHelper {
 		String nextLetter = matriz[nextPost.getX()][nextPost.getY()];
 
 		if (letter.equals(nextLetter)) {
-			counterList.add(new Counter(pos.getDiagonal(), letter));
+			searchResult.getCounterList().add(new Counter(pos.getDiagonal(), letter));
 			
-			coincidence = getCoincidence(counterList, pos.getDiagonal(), letter);
+			searchResult.setCoincidence(getCoincidence(searchResult.getCounterList(), pos.getDiagonal(), letter));
 			
-			if (coincidence==3) {
+			if (searchResult.getCoincidence()==3) {
 				searchResult.setBooleano(true);
 				return false; 
 			}	
@@ -201,7 +188,8 @@ public class BusinessDNAAnalizerHelper {
 
 	}
 	
-	private int getCoincidence(List<Counter> counterList, int abscissa, String letter) {		 
+	private int getCoincidence(List<Counter> counterList, int abscissa, String letter) {
+		List<Counter> filteredCounterList;
 		
 		filteredCounterList = counterList.stream().filter(Counter -> abscissa == Counter.getAbscissa() && letter.equals(Counter.getLetter()))
 		.collect(Collectors.toList());
@@ -214,12 +202,10 @@ public class BusinessDNAAnalizerHelper {
 	}
 	
 	private List<Diagonal> getDiagonal(List<Diagonal> DiagonalsList, int numero) {
+		List<Diagonal> filteredDiagonalList;
+		
 		filteredDiagonalList = DiagonalsList.stream().filter(Diagonal -> numero == Diagonal.getDiagonal())
 		.collect(Collectors.toList());
-		
-//		for(Diagonal diagonal : filteredDiagonalList) {
-//			logger.info("diagonal " + diagonal.getDiagonal() + " x" + diagonal.getX() + " y" + diagonal.getY());
-//		}
 		
 		return filteredDiagonalList;
 	}	
