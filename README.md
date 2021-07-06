@@ -7,8 +7,8 @@ The challenge consists of detecting 4 consecutive letters in a string array that
 ## Installation
 How to install it
 ```
-1) git clone -b master https://github.com/esoderosms/challenge.git
-2) cd challenge
+1) git clone https://github.com/esoderosms/mulesoft-mutant.git
+2) cd mulesoft-mutant
 3) mvn install
 ```
 ## How to use Api Rest
