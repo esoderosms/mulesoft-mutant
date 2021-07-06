@@ -8,14 +8,7 @@ import com.soderling.challenge.model.Counter;
 public class SearchResult {
 	private boolean booleano;
 	private int coincidence;
-	private List<Counter> counterList;
-	
-//	public SearchResult(boolean booleano, int coincidence, List<Counter> counterList) {
-//		super();
-//		this.booleano = booleano;
-//		this.coincidence = coincidence;
-//		this.counterList = counterList;
-//	}	
+	private List<Counter> counterList;	
 
 	public SearchResult() {
 		super();
@@ -23,8 +16,6 @@ public class SearchResult {
 		this.coincidence = 0;
 		this.counterList = new ArrayList<Counter>();
 	}
-
-
 
 	public boolean getBooleano() {
 		return booleano;

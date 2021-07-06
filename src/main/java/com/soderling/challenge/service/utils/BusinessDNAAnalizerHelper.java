@@ -24,10 +24,14 @@ public class BusinessDNAAnalizerHelper {
 		for (int x = 0; x < dna.length; x++) {
 			searchResult.setCoincidence(0);
 			for (int y = 0; y < dna[x].length-1; y++) {
-				keep = searchHorizontal(x, y, dna, searchResult);					
-					if(keep == false) {
-						break;
-					} 				
+				keep = searchHorizontal(x, y, dna, searchResult);
+				if (searchResult.getBooleano()) {
+					logger.info("Horizontal search is: " + searchResult.getBooleano());
+					return searchResult.getBooleano();
+				}
+				if(keep == false) {
+					break;
+				} 				
 			}
 		}
 		
@@ -45,10 +49,14 @@ public class BusinessDNAAnalizerHelper {
 			for (int x = 0; x < invertDna.length; x++) {
 				searchResult.setCoincidence(0);
 				for (int y = 0; y < invertDna[x].length-1; y++) {
-					keep = searchHorizontal(x, y, invertDna, searchResult);					
-						if(keep == false) {
-							break;
-						} 				
+					keep = searchHorizontal(x, y, invertDna, searchResult);
+					if (searchResult.getBooleano()) {
+						logger.info("Vertical search is: " + searchResult.getBooleano());
+						return searchResult.getBooleano();
+					}
+					if(keep == false) {
+						break;
+					} 				
 				}
 			}
 			
@@ -73,6 +81,10 @@ public class BusinessDNAAnalizerHelper {
 					Diagonal diagonalPos = (Diagonal) posArray[j];
 					Diagonal diagonalNextPos = (Diagonal) posArray[j+1];
 					keep = searchOblique(diagonalPos, diagonalNextPos, dna, searchResult);
+					if (searchResult.getBooleano()) {
+						logger.info("Oblique search is: " + searchResult.getBooleano());
+						return searchResult.getBooleano();
+					}
 					if (keep == false) {
 						break;
 					}
