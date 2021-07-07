@@ -72,23 +72,29 @@ public class BusinessDNAAnalizerHelper {
 			
 			searchResult.setCoincidence(0);
 			
-			List<Diagonal> DiagonalsList = mapDiagonal();
+			List<Diagonal> DiagonalsList = getDiagonals(dna);
 			
-			for (int i=1; i<= 10; i++) {
-				List<Diagonal> diagonalPosList = getDiagonal(DiagonalsList, i);
+			int idDiagonal = (dna.length-1) * (-1);
+			
+			while (idDiagonal != dna.length-1) {
+				List<Diagonal> diagonalPosList = getDiagonal(DiagonalsList, idDiagonal);
 				Object[] posArray = diagonalPosList.toArray();
-				for(int j=0; j<= posArray.length; j++) {
-					Diagonal diagonalPos = (Diagonal) posArray[j];
-					Diagonal diagonalNextPos = (Diagonal) posArray[j+1];
-					keep = searchOblique(diagonalPos, diagonalNextPos, dna, searchResult);
-					if (searchResult.getBooleano()) {
-						logger.info("Oblique search is: " + searchResult.getBooleano());
-						return searchResult.getBooleano();
+				if(posArray.length>=4) {
+					for(int j=0; j<= posArray.length; j++) {
+						Diagonal diagonalPos = (Diagonal) posArray[j];					
+							Diagonal diagonalNextPos = (Diagonal) posArray[j+1];
+							keep = searchOblique(diagonalPos, diagonalNextPos, dna, searchResult);
+							if (searchResult.getBooleano()) {
+								logger.info("Oblique search is: " + searchResult.getBooleano());
+								return searchResult.getBooleano();
+							}
+							if (keep == false) {
+								break;
+							}										
 					}
-					if (keep == false) {
-						break;
-					}
-				}				
+				}
+				
+				idDiagonal++;
 			}
 			
 			logger.info("Oblique search is: " + searchResult.getBooleano());
@@ -143,58 +149,19 @@ public class BusinessDNAAnalizerHelper {
 		return false;
 	}
 	
-	private List<Diagonal> mapDiagonal() {
+	private List<Diagonal> getDiagonals(String [][]dna) {
 
 		List<Diagonal> DiagonalsList = new ArrayList<Diagonal>();
 		
-		DiagonalsList.add(new Diagonal(1, 3, 0));
-		DiagonalsList.add(new Diagonal(1, 2, 1));
-		DiagonalsList.add(new Diagonal(1, 1, 2));
-		DiagonalsList.add(new Diagonal(1, 0, 3));
-		DiagonalsList.add(new Diagonal(2, 4, 0));
-		DiagonalsList.add(new Diagonal(2, 3, 1));
-		DiagonalsList.add(new Diagonal(2, 2, 2));
-		DiagonalsList.add(new Diagonal(2, 1, 3));
-		DiagonalsList.add(new Diagonal(2, 0, 4));
-		DiagonalsList.add(new Diagonal(3, 5, 0));
-		DiagonalsList.add(new Diagonal(3, 4, 1));
-		DiagonalsList.add(new Diagonal(3, 3, 2));
-		DiagonalsList.add(new Diagonal(3, 2, 3));
-		DiagonalsList.add(new Diagonal(3, 1, 4));
-		DiagonalsList.add(new Diagonal(3, 0, 5));
-		DiagonalsList.add(new Diagonal(4, 5, 1));
-		DiagonalsList.add(new Diagonal(4, 4, 2));
-		DiagonalsList.add(new Diagonal(4, 3, 3));
-		DiagonalsList.add(new Diagonal(4, 2, 4));
-		DiagonalsList.add(new Diagonal(4, 1, 5));
-		DiagonalsList.add(new Diagonal(5, 5, 2));
-		DiagonalsList.add(new Diagonal(5, 4, 3));
-		DiagonalsList.add(new Diagonal(5, 3, 4));
-		DiagonalsList.add(new Diagonal(5, 2, 5));
-		DiagonalsList.add(new Diagonal(6, 3, 5));
-		DiagonalsList.add(new Diagonal(6, 2, 4));
-		DiagonalsList.add(new Diagonal(6, 1, 3));
-		DiagonalsList.add(new Diagonal(6, 0, 2));
-		DiagonalsList.add(new Diagonal(7, 4, 5));
-		DiagonalsList.add(new Diagonal(7, 3, 4));
-		DiagonalsList.add(new Diagonal(7, 2, 3));
-		DiagonalsList.add(new Diagonal(7, 1, 2));
-		DiagonalsList.add(new Diagonal(7, 0, 1));
-		DiagonalsList.add(new Diagonal(8, 5, 5));
-		DiagonalsList.add(new Diagonal(8, 4, 4));
-		DiagonalsList.add(new Diagonal(8, 3, 3));
-		DiagonalsList.add(new Diagonal(8, 2, 2));
-		DiagonalsList.add(new Diagonal(8, 1, 1));
-		DiagonalsList.add(new Diagonal(8, 0, 0));
-		DiagonalsList.add(new Diagonal(9, 5, 4));
-		DiagonalsList.add(new Diagonal(9, 4, 3));
-		DiagonalsList.add(new Diagonal(9, 3, 2));
-		DiagonalsList.add(new Diagonal(9, 2, 1));
-		DiagonalsList.add(new Diagonal(9, 1, 0));
-		DiagonalsList.add(new Diagonal(10, 5, 3));
-		DiagonalsList.add(new Diagonal(10, 4, 2));
-		DiagonalsList.add(new Diagonal(10, 3, 1));
-		DiagonalsList.add(new Diagonal(10, 2, 0));
+		int m = dna[0].length;
+        int n = dna.length;
+        
+
+        for (int diagonal = 1 - m; diagonal <= n - 1; diagonal += 1) {
+            for (int vertical = Math.max(0, diagonal), horizontal = -Math.min(0, diagonal); vertical < n && horizontal < m; vertical += 1, horizontal += 1) {
+                DiagonalsList.add(new Diagonal(diagonal, horizontal, vertical));
+            }
+        }
 		
 		return DiagonalsList;		
 

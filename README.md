@@ -18,11 +18,11 @@ curl --location --request GET 'http://localhost:8080/dna/stats'
 
 Mutant
 curl --location --request POST 'http://localhost:8080/dna/mutant' -H "Content-Type:application/json" -d '{
-"dna":["ATGCGA","CAGTGC","TTATGT","AGAAGG","CCCCTA","TCACTG"] 
+"dna":[ "ATGCGA","CGAGGC","TTATGT","AGAACG","CCGCTA","TCACTG"] 
 }​'
 
 Human
 curl --location --request POST 'http://localhost:8080/dna/mutant' -H "Content-Type:application/json" -d '{
-"dna":["ATGCGA","CAGTGC","TTATAT","AGAAGG","CCBCTA","TCACTG"] 
+"dna":["ATGCGA","CGGTGC","TTATAT","AGAAGG","CCGCTA","TCACTG"] 
 }'
 ```

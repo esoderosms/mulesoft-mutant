@@ -34,7 +34,7 @@ public class DnaServiceTest {
 	
 	@Test
 	public void testStatusOk() throws Exception {		
-		String mutantDna = "{\"dna\":[\"ATGCGA\",\"CAGTGC\",\"TTATGT\",\"AGAAGG\",\"CCCCTA\",\"TCACTG\"]}";
+		String mutantDna = "{\"dna\":[\"ATGCGA\",\"CGAGGC\",\"TTATGT\",\"AGAACG\",\"CCGCTA\",\"TCACTG\"]}";
 
 		Mockito.when(service.isMutant(ValidDna.convertDna(mutantDna))).thenReturn(true);
 
@@ -48,7 +48,7 @@ public class DnaServiceTest {
 	
 	@Test
 	public void testStatusForbidden() throws Exception {		
-		String humanDna = "{\"dna\":[\"ATGCGA\",\"CAGTGC\",\"TTATAT\",\"AGAAGG\",\"CCBCTA\",\"TCACTG\"]}";
+		String humanDna = "{\"dna\":[\"ATGCGA\",\"CGGTGC\",\"TTATAT\",\"AGAAGG\",\"CCGCTA\",\"TCACTG\"]}";
 
 		Mockito.when(service.isMutant(ValidDna.convertDna(humanDna))).thenReturn(false);
 
