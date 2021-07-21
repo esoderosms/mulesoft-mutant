@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.soderling.challenge.model.Stats;
 import com.soderling.challenge.service.DnaService;
-import com.soderling.challenge.utils.ValidDna;
+import com.soderling.challenge.service.utils.ValidDna;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,25 +22,31 @@ import org.springframework.http.ResponseEntity;
 
 @RestController
 @RequestMapping("/dna")
-public class DnaController {	
+public class DnaController {
 	
 	@Autowired
 	private DnaService adnService;	
 	
 	@PostMapping("/mutant")
-	public ResponseEntity<?> ismutantAdn(@RequestBody String body) throws Exception {
-		Map<String, Boolean> response = new HashMap<>();
+	public ResponseEntity<?> ismutantAdn(@RequestBody String body) {
+		Map<String, String> response = new HashMap<>();		
+		String[] dnaArray;
 		
-		String[] dnaArray = ValidDna.convertDna(body);		
+		try {
+			dnaArray = ValidDna.convertDna(body);
+		} catch (Exception e) {
+			response.put("ismutant", e.getMessage());
+			return new ResponseEntity<Map<String, String>>(response, HttpStatus.BAD_REQUEST);
+		}		
+
+		boolean result = adnService.isMutant(dnaArray);				
 		
-		boolean result = adnService.isMutant(dnaArray);
-		
-		response.put("ismutant", result);
-		
-		if (result) {			
-			return new ResponseEntity<Map<String, Boolean>>(response, HttpStatus.OK);
+		if (result) {		
+			response.put("ismutant", "true");	
+			return new ResponseEntity<Map<String, String>>(response, HttpStatus.OK);
 		} else {
-			return new ResponseEntity<Map<String, Boolean>>(response, HttpStatus.FORBIDDEN);
+			response.put("ismutant", "false");
+			return new ResponseEntity<Map<String, String>>(response, HttpStatus.FORBIDDEN);
 		}
 	}
 	

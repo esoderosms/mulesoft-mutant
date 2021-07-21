@@ -1,4 +1,4 @@
-package com.soderling.challenge;
+package com.soderling.challenge.controller;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -18,14 +18,15 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.soderling.challenge.model.Stats;
 import com.soderling.challenge.service.DnaServiceImpl;
-import com.soderling.challenge.utils.ValidDna;
+import com.soderling.challenge.service.utils.ValidDna;
+
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-public class DnaServiceTest {
+public class DnaControllerTest {
 	@MockBean
-	private DnaServiceImpl service;	
+	private DnaServiceImpl dnaServiceImpl;	
 	
 	@Autowired
 	private MockMvc mockMvc;
@@ -36,7 +37,7 @@ public class DnaServiceTest {
 	public void testStatusOk() throws Exception {		
 		String mutantDna = "{\"dna\":[\"ATGCGA\",\"CGAGGC\",\"TTATGT\",\"AGAACG\",\"CCGCTA\",\"TCACTG\"]}";
 
-		Mockito.when(service.isMutant(ValidDna.convertDna(mutantDna))).thenReturn(true);
+		Mockito.when(dnaServiceImpl.isMutant(ValidDna.convertDna(mutantDna))).thenReturn(true);
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/dna/mutant").accept(MediaType.APPLICATION_JSON)
 				.content(mutantDna).contentType(MediaType.APPLICATION_JSON);
@@ -50,7 +51,7 @@ public class DnaServiceTest {
 	public void testStatusForbidden() throws Exception {		
 		String humanDna = "{\"dna\":[\"ATGCGA\",\"CGGTGC\",\"TTATAT\",\"AGAAGG\",\"CCGCTA\",\"TCACTG\"]}";
 
-		Mockito.when(service.isMutant(ValidDna.convertDna(humanDna))).thenReturn(false);
+		Mockito.when(dnaServiceImpl.isMutant(ValidDna.convertDna(humanDna))).thenReturn(false);
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/dna/mutant").accept(MediaType.APPLICATION_JSON)
 				.content(humanDna).contentType(MediaType.APPLICATION_JSON);
@@ -61,11 +62,23 @@ public class DnaServiceTest {
 	}
 	
 	@Test
+	public void testStatusBadRequest() throws Exception {		
+		String invalidDna = "{\"dna\":[\"ATGCGAA\",\"CGGTGC\",\"TTATAT\",\"AGAAGG\",\"CCGCTA\",\"TCACTG\"]}";		
+
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/dna/mutant").accept(MediaType.APPLICATION_JSON)
+				.content(invalidDna).contentType(MediaType.APPLICATION_JSON);
+
+		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+		Assert.assertTrue(result.getResponse().getStatus() == 400);
+	}
+	
+	@Test
 	public void testStatsRatioOne() throws Exception {
 		Stats stats = new Stats(1, 1, 1f);
 		String jsonStats = mapper.writeValueAsString(stats);
 
-		Mockito.when(service.ratio()).thenReturn(stats);
+		Mockito.when(dnaServiceImpl.ratio()).thenReturn(stats);
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/dna/stats");
 
